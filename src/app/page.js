@@ -3,6 +3,7 @@
 import { motion, useAnimation } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import Template from "@/components/Template";
 
 export default function HomePage() {
   const controls = useAnimation();
@@ -29,11 +30,7 @@ export default function HomePage() {
   };
 
   return (
-    <main className="relative min-h-screen bg-gradient-to-br from-indigo-100 via-purple-100 to-pink-200 flex items-center justify-center overflow-hidden px-4">
-      {/* Background blobs */}
-      <div className="absolute top-[-150px] left-[-100px] w-[300px] h-[300px] bg-purple-400 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-pulse"></div>
-      <div className="absolute bottom-[-150px] right-[-100px] w-[300px] h-[300px] bg-indigo-400 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-pulse delay-75"></div>
-
+    <Template>
       {/* Animated Container */}
       <motion.div
         initial={{ y: -100, opacity: 0 }}
@@ -56,11 +53,11 @@ export default function HomePage() {
 
         <button
           onClick={handleExploreClick}
-          className="px-8 py-3 bg-indigo-700 hover:bg-indigo-900 text-white text-xl font-bold rounded-xl shadow-lg hover:shadow-indigo-500/60 transition-transform duration-300"
+          className="px-8 py-3 bg-indigo-700 hover:bg-indigo-900 text-white text-xl font-bold rounded-xl shadow-lg hover:shadow-violet-500/100 transition-transform duration-300"
         >
           Explore Data
         </button>
       </motion.div>
-    </main>
+    </Template>
   );
 }

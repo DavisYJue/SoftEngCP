@@ -1,37 +1,21 @@
 "use client";
 
-import { motion, useAnimation } from "framer-motion";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { usePageAnimation } from "@/hooks/Animations";
 import Template from "@/components/Template";
+import { motion } from "framer-motion";
 
 export default function HomePage() {
-  const controls = useAnimation();
   const router = useRouter();
-  const [isExiting, setIsExiting] = useState(false);
-
-  useEffect(() => {
-    // Play entrance animation on mount
-    controls.start({
-      y: 0,
-      opacity: 1,
-      transition: { duration: 0.8, ease: "easeOut" },
-    });
-  }, [controls]);
+  const { controls, isExiting, startExitAnimation } = usePageAnimation();
 
   const handleExploreClick = async () => {
-    setIsExiting(true);
-    await controls.start({
-      y: -100,
-      opacity: 0,
-      transition: { duration: 0.6, ease: "easeInOut" },
-    });
+    await startExitAnimation();
     router.push("/RoadsData");
   };
 
   return (
     <Template>
-      {/* Animated Container */}
       <motion.div
         initial={{ y: -100, opacity: 0 }}
         animate={controls}
@@ -53,6 +37,7 @@ export default function HomePage() {
 
         <button
           onClick={handleExploreClick}
+          disabled={isExiting}
           className="px-8 py-3 bg-indigo-700 hover:bg-indigo-900 text-white text-xl font-bold rounded-xl shadow-lg hover:shadow-violet-500/100 transition-transform duration-300"
         >
           Explore Data

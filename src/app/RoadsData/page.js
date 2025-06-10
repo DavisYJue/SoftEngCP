@@ -7,6 +7,19 @@ import Template from "@/components/Template";
 
 const ITEMS_PER_PAGE = 20;
 
+const computeGeometryLength = (geometry) => {
+  if (!geometry || geometry.type !== "LineString") return 0;
+  let length = 0;
+  for (let i = 1; i < geometry.coordinates.length; i++) {
+    const [x1, y1] = geometry.coordinates[i - 1];
+    const [x2, y2] = geometry.coordinates[i];
+    const dx = x2 - x1;
+    const dy = y2 - y1;
+    length += Math.sqrt(dx * dx + dy * dy);
+  }
+  return parseFloat(length.toFixed(4));
+};
+
 const RoadsDataPage = () => {
   const [originalData, setOriginalData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
@@ -17,32 +30,40 @@ const RoadsDataPage = () => {
   const [districts, setDistricts] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
 
-  // Define the columns we want to display
   const roadColumns = [
     { id: "name", label: "Road Name" },
     { id: "name_no_suffix", label: "Name Without Suffix" },
     { id: "suffix", label: "Suffix" },
     { id: "district_name", label: "District" },
     { id: "city", label: "City" },
+    { id: "geometry_length", label: "Geometry Length" },
   ];
 
-  // Load GeoJSON data on component mount
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Fetch roads data
-        const roadsResponse = await fetch("/data/final_gz_roads.geojson");
+        const roadsResponse = await fetch("/data/final_gz_roads_ID.geojson");
         const roadsJson = await roadsResponse.json();
-        setOriginalData(roadsJson.features);
-        setFilteredData(roadsJson.features);
 
-        // Fetch districts for filter dropdown
+        const processedFeatures = roadsJson.features.map((feature) => {
+          const length = computeGeometryLength(feature.geometry);
+          return {
+            ...feature,
+            properties: {
+              ...feature.properties,
+              geometry_length: length,
+            },
+          };
+        });
+
+        setOriginalData(processedFeatures);
+        setFilteredData(processedFeatures);
+
         const districtsResponse = await fetch(
           "/data/final_gz_districts.geojson"
         );
         const districtsJson = await districtsResponse.json();
 
-        // Extract unique district names
         const uniqueDistricts = Array.from(
           new Set(districtsJson.features.map((f) => f.properties.district_name))
         ).sort();
@@ -59,13 +80,10 @@ const RoadsDataPage = () => {
     fetchData();
   }, []);
 
-  // Apply filtering whenever filters change
   useEffect(() => {
     if (!originalData.length) return;
-
     let result = [...originalData];
 
-    // Apply text filter
     if (filterText.trim()) {
       const searchTerm = filterText.toLowerCase();
       result = result.filter((feature) => {
@@ -78,7 +96,6 @@ const RoadsDataPage = () => {
       });
     }
 
-    // Apply district filter
     if (districtFilter) {
       result = result.filter(
         (feature) => feature.properties.district_name === districtFilter
@@ -86,21 +103,12 @@ const RoadsDataPage = () => {
     }
 
     setFilteredData(result);
-    setCurrentPage(1); // Reset to first page when filters change
+    setCurrentPage(1);
   }, [filterText, districtFilter, originalData]);
 
-  const handleFilterChange = (e) => {
-    setFilterText(e.target.value);
-  };
-
-  const handleDistrictChange = (e) => {
-    setDistrictFilter(e.target.value);
-  };
-
-  const handlePageChange = (newPage) => {
-    setCurrentPage(newPage);
-  };
-
+  const handleFilterChange = (e) => setFilterText(e.target.value);
+  const handleDistrictChange = (e) => setDistrictFilter(e.target.value);
+  const handlePageChange = (newPage) => setCurrentPage(newPage);
   const clearFilters = () => {
     setFilterText("");
     setDistrictFilter("");

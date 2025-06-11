@@ -9,8 +9,12 @@ const RoadsTable = ({
   itemsPerPage,
   totalItems,
   onPageChange,
+  originalData, // full unfiltered data array
 }) => {
   const [selectedIds, setSelectedIds] = useState([]);
+
+  // Detect if a filter is applied by comparing lengths
+  const isFiltered = data.length !== originalData.length;
 
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = Math.min(startIndex + itemsPerPage, totalItems);
@@ -34,6 +38,36 @@ const RoadsTable = ({
   const selectedItems = data.filter((feature) =>
     selectedIds.includes(feature.id)
   );
+
+  const allFilteredIds = data.map((feature) => feature.id);
+  const allSelected =
+    selectedIds.length > 0 &&
+    allFilteredIds.every((id) => selectedIds.includes(id));
+  const isIndeterminate =
+    selectedIds.length > 0 && selectedIds.length < allFilteredIds.length;
+
+  const handleSelectAll = () => {
+    const filteredIds = data.map((item) => item.id);
+    const allSelected =
+      filteredIds.length > 0 &&
+      filteredIds.every((id) => selectedIds.includes(id));
+    const isIndeterminate =
+      filteredIds.some((id) => selectedIds.includes(id)) && !allSelected;
+    const isFiltered = originalData.length !== data.length; // passed from props
+
+    setSelectedIds((prev) => {
+      const allAlreadySelected = filteredIds.every((id) => prev.includes(id));
+
+      if (allAlreadySelected) {
+        // Unselect all filtered
+        return prev.filter((id) => !filteredIds.includes(id));
+      } else {
+        // Add filtered items (avoiding duplicates)
+        const newIds = filteredIds.filter((id) => !prev.includes(id));
+        return [...prev, ...newIds];
+      }
+    });
+  };
 
   if (!data.length) {
     return (
@@ -108,17 +142,32 @@ const RoadsTable = ({
           itemsPerPage={itemsPerPage}
           totalItems={totalItems}
           onPageChange={onPageChange}
+          onSelectAll={handleSelectAll}
+          allSelected={allSelected}
+          isIndeterminate={isIndeterminate}
+          isFiltered={isFiltered}
         />
       </div>
 
       {/* Selected Table */}
       <div className="overflow-x-auto rounded-lg text-black">
         {selectedItems.length > 0 && (
-          <SelectedRoadsTable
-            selectedItems={selectedItems}
-            columns={columns}
-            onRemove={handleRemoveSelected}
-          />
+          <div className="mb-6">
+            <SelectedRoadsTable
+              selectedItems={selectedItems}
+              columns={columns}
+              onRemove={handleRemoveSelected}
+              onDeselectFiltered={() =>
+                setSelectedIds((prev) =>
+                  prev.filter(
+                    (id) => !data.some((item) => item.id === id) // use filtered data from current props `data`
+                  )
+                )
+              }
+              onDeselectAll={() => setSelectedIds([])}
+              isFiltered={isFiltered}
+            />
+          </div>
         )}
       </div>
     </div>

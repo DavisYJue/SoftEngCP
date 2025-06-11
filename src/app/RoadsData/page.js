@@ -7,6 +7,7 @@ import { useRoadsData } from "@/hooks/useRoadsData";
 
 const RoadsDataPage = () => {
   const {
+    originalData,
     filteredData,
     filterText,
     setFilterText,
@@ -54,6 +55,8 @@ const RoadsDataPage = () => {
 
         <RoadsTable
           data={filteredData}
+          originalData={originalData} // pass full unfiltered dataset here
+          filteredData={filteredData}
           columns={[
             { id: "name", label: "Road Name" },
             { id: "name_no_suffix", label: "Name Without Suffix" },

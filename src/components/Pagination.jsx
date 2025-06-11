@@ -15,7 +15,7 @@ const Pagination = ({
   if (totalPages <= 1 && totalItems === 0) return null;
 
   return (
-    <div className="flex flex-col md:flex-row md:justify-between md:items-center p-4 bg-gray-50 border-t text-sm text-gray-600 space-y-2 md:space-y-0">
+    <div className="flex flex-col md:flex-row md:justify-between md:items-center p-4 bg-gray-50 border-t text-md text-gray-600 space-y-2 md:space-y-0">
       {/* Left: Select All */}
       <div className="flex items-center space-x-2">
         <input
@@ -50,8 +50,8 @@ const Pagination = ({
           disabled={currentPage === 1}
           className={`px-3 py-1 rounded ${
             currentPage === 1
-              ? "bg-gray-200 text-gray-400 cursor-not-allowed"
-              : "bg-gray-200 hover:bg-gray-300"
+              ? "bg-indigo-300 hover:bg-indigo-400 text-gray-400 hover:text-gray-400 text-lg font-bold rounded-xl shadow-lg hover:shadow-violet-400/100 transition-transform duration-300 cursor-not-allowed"
+              : "bg-indigo-400 hover:bg-indigo-500 text-black text-lg font-bold rounded-xl shadow-lg hover:shadow-violet-500/100 transition-transform duration-300"
           }`}
         >
           Previous
@@ -61,7 +61,7 @@ const Pagination = ({
           <span className="mx-2">Page</span>
           <span className="font-medium">{currentPage}</span>
           <span className="mx-1">of</span>
-          <span className="font-medium">{totalPages}</span>
+          <span className="font-medium mr-2">{totalPages}</span>
         </div>
 
         <button
@@ -69,8 +69,8 @@ const Pagination = ({
           disabled={currentPage === totalPages}
           className={`px-3 py-1 rounded ${
             currentPage === totalPages
-              ? "bg-gray-200 text-gray-400 cursor-not-allowed"
-              : "bg-gray-200 hover:bg-gray-300"
+              ? "bg-indigo-300 hover:bg-indigo-400 text-gray-400 hover:text-gray-400 text-lg font-bold rounded-xl shadow-lg hover:shadow-violet-400/100 transition-transform duration-300 cursor-not-allowed"
+              : "bg-indigo-400 hover:bg-indigo-500 text-black text-lg font-bold rounded-xl shadow-lg hover:shadow-violet-500/100 transition-transform duration-300"
           }`}
         >
           Next

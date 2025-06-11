@@ -82,7 +82,7 @@ const RoadsTable = ({
       <div className="overflow-x-auto rounded-lg shadow text-black">
         {/* Main Table */}
         <table className="min-w-full bg-white">
-          <thead className="bg-gray-100 border-b">
+          <thead className="bg-gray-100 border-b text-lg">
             <tr>
               <th className="py-3 px-4 text-center">Select</th>
               <th className="py-3 px-4 text-left">ID</th>
@@ -106,7 +106,7 @@ const RoadsTable = ({
                       ? "bg-blue-100"
                       : index % 2 === 0
                       ? "bg-white"
-                      : "bg-gray-50"
+                      : "bg-gray-100"
                   }`}
                   onClick={() => handleRowClick(featureId)}
                 >

@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { usePageAnimation } from "@/hooks/Animations";
+import { usePageAnimation } from "@/hooks/animations";
 import Template from "@/components/Template";
 import { motion } from "framer-motion";
 
@@ -38,7 +38,7 @@ export default function HomePage() {
         <button
           onClick={handleExploreClick}
           disabled={isExiting}
-          className="px-8 py-3 bg-indigo-700 hover:bg-indigo-900 text-white text-xl font-bold rounded-xl shadow-lg hover:shadow-violet-500/100 transition-transform duration-300"
+          className="px-8 py-3 bg-indigo-400 hover:bg-indigo-500 text-black text-xl font-bold rounded-xl shadow-lg hover:shadow-violet-500/100 transition-transform duration-300"
         >
           Explore Data
         </button>

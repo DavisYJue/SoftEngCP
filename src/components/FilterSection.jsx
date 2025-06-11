@@ -1,4 +1,7 @@
 import React from "react";
+import LabeledInput from "./LabeledInput";
+import LabeledSelect from "./LabeledSelect";
+import FilterStatus from "./FilterStatus"; // ✅ New import
 
 const FilterSection = ({
   filterText,
@@ -45,54 +48,28 @@ const FilterSection = ({
   return (
     <div className="bg-gray-50 px-8 py-4 rounded-lg mb-6 shadow text-black">
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <div>
-          <label className="block text-lg font-semibold text-gray-700 mb-1">
-            Search by ID or Name
-          </label>
-          <input
-            type="text"
-            placeholder="Search by ID or name..."
-            value={filterText}
-            onChange={onFilterChange}
-            className="w-full p-2 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
+        <LabeledInput
+          label="Search by ID or Name"
+          value={filterText}
+          onChange={onFilterChange}
+          placeholder="Search by ID or name..."
+        />
 
-        <div>
-          <label className="block text-lg font-semibold text-gray-700 mb-1">
-            Filter by District
-          </label>
-          <select
-            value={districtFilter}
-            onChange={onDistrictChange}
-            className="h-10.5 w-full p-2 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            <option value="">All Districts</option>
-            {districts.map((district) => (
-              <option key={district} value={district}>
-                {district}
-              </option>
-            ))}
-          </select>
-        </div>
+        <LabeledSelect
+          label="Filter by District"
+          value={districtFilter}
+          onChange={onDistrictChange}
+          options={districts}
+          defaultOption="All Districts"
+        />
 
-        <div>
-          <label className="block text-lg font-semibold text-gray-700 mb-1">
-            Filter by Suffix
-          </label>
-          <select
-            value={suffixFilter}
-            onChange={onSuffixChange}
-            className="h-10.5 w-full p-2 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            <option value="">All Suffixes</option>
-            {suffixOptions.map((suffix) => (
-              <option key={suffix} value={suffix}>
-                {suffix}
-              </option>
-            ))}
-          </select>
-        </div>
+        <LabeledSelect
+          label="Filter by Suffix"
+          value={suffixFilter}
+          onChange={onSuffixChange}
+          options={suffixOptions}
+          defaultOption="All Suffixes"
+        />
 
         <div className="flex items-end">
           <button
@@ -104,11 +81,12 @@ const FilterSection = ({
         </div>
       </div>
 
-      <div className="mt-4 text-md text-gray-600">
-        Showing {filteredCount} of {totalCount} roads
-        {districtFilter && ` in ${districtFilter}`}
-        {suffixFilter && ` with suffix ${suffixFilter}`}
-      </div>
+      <FilterStatus
+        filteredCount={filteredCount}
+        totalCount={totalCount}
+        districtFilter={districtFilter}
+        suffixFilter={suffixFilter}
+      />
     </div>
   );
 };

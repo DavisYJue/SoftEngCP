@@ -44,75 +44,83 @@ const RoadsTable = ({
   }
 
   return (
-    <div className="overflow-x-auto rounded-lg shadow text-black">
-      {/* Main Table */}
-      <table className="min-w-full bg-white">
-        <thead className="bg-gray-100 border-b">
-          <tr>
-            <th className="py-3 px-4 text-left">Select</th>
-            <th className="py-3 px-4 text-left">ID</th>
-            {columns.map((column) => (
-              <th key={column.id} className="py-3 px-4 text-left">
-                {column.label}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {currentItems.map((feature, index) => {
-            const featureId = feature.id;
-            const selected = isSelected(featureId);
+    <div>
+      <div className="overflow-x-auto rounded-lg shadow text-black">
+        {/* Main Table */}
+        <table className="min-w-full bg-white">
+          <thead className="bg-gray-100 border-b">
+            <tr>
+              <th className="py-3 px-4 text-center">Select</th>
+              <th className="py-3 px-4 text-left">ID</th>
+              {columns.map((column) => (
+                <th key={column.id} className="py-3 px-4 text-left">
+                  {column.label}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {currentItems.map((feature, index) => {
+              const featureId = feature.id;
+              const selected = isSelected(featureId);
 
-            return (
-              <tr
-                key={featureId}
-                className={`cursor-pointer ${
-                  selected
-                    ? "bg-blue-100"
-                    : index % 2 === 0
-                    ? "bg-white"
-                    : "bg-gray-50"
-                }`}
-                onClick={() => handleRowClick(featureId)}
-              >
-                <td
-                  className="py-3 px-4 border-b"
-                  onClick={(e) => e.stopPropagation()}
+              return (
+                <tr
+                  key={featureId}
+                  className={`cursor-pointer ${
+                    selected
+                      ? "bg-blue-100"
+                      : index % 2 === 0
+                      ? "bg-white"
+                      : "bg-gray-50"
+                  }`}
+                  onClick={() => handleRowClick(featureId)}
                 >
-                  <input
-                    type="checkbox"
-                    checked={selected}
-                    onChange={() => handleRowClick(featureId)}
-                    className="w-4 h-4 m-3"
-                  />
-                </td>
-                <td className="py-3 px-4 border-b">{featureId}</td>
-                {columns.map((column) => (
-                  <td key={column.id} className="py-3 px-4 border-b">
-                    {feature.properties[column.id] ?? "-"}
+                  <td
+                    className="py-3 px-4 border-b cursor-pointer text-center"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleRowClick(featureId);
+                    }}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={selected}
+                      readOnly
+                      className="w-5 h-5 mt-1.5 pointer-events-none"
+                    />
                   </td>
-                ))}
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
 
-      <Pagination
-        currentPage={currentPage}
-        itemsPerPage={itemsPerPage}
-        totalItems={totalItems}
-        onPageChange={onPageChange}
-      />
+                  <td className="py-3 px-4 border-b">{featureId}</td>
+                  {columns.map((column) => (
+                    <td key={column.id} className="py-3 px-4 border-b">
+                      {feature.properties[column.id] ?? "-"}
+                    </td>
+                  ))}
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+
+        <Pagination
+          currentPage={currentPage}
+          itemsPerPage={itemsPerPage}
+          totalItems={totalItems}
+          onPageChange={onPageChange}
+        />
+      </div>
 
       {/* Selected Table */}
-      {selectedItems.length > 0 && (
-        <SelectedRoadsTable
-          selectedItems={selectedItems}
-          columns={columns}
-          onRemove={handleRemoveSelected}
-        />
-      )}
+      <div className="overflow-x-auto rounded-lg text-black">
+        {selectedItems.length > 0 && (
+          <SelectedRoadsTable
+            selectedItems={selectedItems}
+            columns={columns}
+            onRemove={handleRemoveSelected}
+          />
+        )}
+      </div>
     </div>
   );
 };

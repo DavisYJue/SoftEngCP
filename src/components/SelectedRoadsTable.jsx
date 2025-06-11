@@ -1,7 +1,9 @@
 "use client";
 
 import React, { useState } from "react";
-import { useRouter } from "next/navigation";
+import PaginationInfo from "./PaginationInfo";
+import PaginationControls from "./PaginationControls";
+import SelectedRoadsActions from "./SelectedRoadsActions";
 
 const ITEMS_PER_PAGE = 10;
 
@@ -14,7 +16,6 @@ const SelectedRoadsTable = ({
   onDeselectAll,
 }) => {
   const [currentPage, setCurrentPage] = useState(1);
-  const router = useRouter();
 
   const totalItems = selectedItems.length;
   const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
@@ -23,19 +24,16 @@ const SelectedRoadsTable = ({
   const endIndex = Math.min(startIndex + ITEMS_PER_PAGE, totalItems);
   const currentItems = selectedItems.slice(startIndex, endIndex);
 
-  const handlePrev = () => {
-    if (currentPage > 1) setCurrentPage(currentPage - 1);
-  };
-
-  const handleNext = () => {
-    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+  const onPageChange = (page) => {
+    if (page >= 1 && page <= totalPages) {
+      setCurrentPage(page);
+    }
   };
 
   if (totalItems === 0) return null;
 
   return (
     <div className="mt-8 text-black">
-      {/* Header above the styled container */}
       <h2 className="text-xl font-semibold mb-2 px-1">
         Selected Road Segments ({totalItems})
       </h2>
@@ -80,62 +78,28 @@ const SelectedRoadsTable = ({
           </tbody>
         </table>
 
-        {/* Pagination and action buttons */}
-        <div className="flex justify-between items-center p-4 bg-gray-50 border-t text-md text-gray-600">
-          {/* Left: Action buttons */}
-          <div className="flex space-x-2">
-            <button
-              onClick={isFiltered ? onDeselectFiltered : onDeselectAll}
-              className="px-3 py-1 bg-rose-400 hover:bg-rose-700 text-lg font-bold rounded-xl shadow-lg hover:shadow-rose-500/100 transition duration-150 text-black"
-            >
-              {isFiltered ? "Deselect Filtered" : "Deselect All"}
-            </button>
-            <button
-              onClick={() => router.push("/RoadsMap")}
-              className="px-4 py-1 bg-emerald-400 hover:bg-emerald-600 text-black text-lg font-bold rounded-xl shadow-lg hover:shadow-green-600/100 transition-transform duration-300"
-            >
-              Show Roads Mapping
-            </button>
-          </div>
+        {/* Footer */}
+        <div className="flex flex-col md:flex-row justify-between items-center p-4 bg-gray-50 border-t text-md text-gray-600 space-y-3 md:space-y-0">
+          {/* Left actions */}
+          <SelectedRoadsActions
+            isFiltered={isFiltered}
+            onDeselectFiltered={onDeselectFiltered}
+            onDeselectAll={onDeselectAll}
+          />
 
-          {/* Center: Pagination status */}
-          <span>
-            Showing {startIndex + 1} to {endIndex} of {totalItems}
-          </span>
+          {/* Center pagination info */}
+          <PaginationInfo
+            currentPage={currentPage}
+            itemsPerPage={ITEMS_PER_PAGE}
+            totalItems={totalItems}
+          />
 
-          {/* Right: Pagination controls */}
-          <div className="flex space-x-2 items-center">
-            <button
-              onClick={handlePrev}
-              disabled={currentPage === 1}
-              className={`px-3 py-1 rounded ${
-                currentPage === 1
-                  ? "bg-indigo-300 hover:bg-indigo-400 text-gray-400 hover:text-gray-400 text-lg font-bold rounded-xl shadow-lg hover:shadow-violet-400/100 transition-transform duration-300 cursor-not-allowed"
-                  : "bg-indigo-400 hover:bg-indigo-500 text-black text-lg font-bold rounded-xl shadow-lg hover:shadow-violet-500/100 transition-transform duration-300"
-              }`}
-            >
-              Previous
-            </button>
-
-            <div className="flex items-center">
-              <span className="mx-2">Page</span>
-              <span className="font-medium">{currentPage}</span>
-              <span className="mx-1">of</span>
-              <span className="font-medium mr-2">{totalPages}</span>
-            </div>
-
-            <button
-              onClick={handleNext}
-              disabled={currentPage === totalPages}
-              className={`px-3 py-1 rounded ${
-                currentPage === totalPages
-                  ? "bg-indigo-300 hover:bg-indigo-400 text-gray-400 hover:text-gray-400 text-lg font-bold rounded-xl shadow-lg hover:shadow-violet-400/100 transition-transform duration-300 cursor-not-allowed"
-                  : "bg-indigo-400 hover:bg-indigo-500 text-black text-lg font-bold rounded-xl shadow-lg hover:shadow-violet-500/100 transition-transform duration-300"
-              }`}
-            >
-              Next
-            </button>
-          </div>
+          {/* Right pagination controls */}
+          <PaginationControls
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={onPageChange}
+          />
         </div>
       </div>
     </div>

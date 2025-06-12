@@ -3,6 +3,7 @@
 import Template from "@/components/Template";
 import FilterSection from "@/components/FilterSection";
 import RoadsTable from "@/components/RoadsTable";
+import LoadingIcon from "@/components/LoadingIcon";
 import { useRoadsData } from "@/hooks/useRoadsData";
 import { useRouter } from "next/navigation";
 
@@ -36,8 +37,7 @@ const RoadsDataPage = () => {
     setSuffixFilter("");
   };
 
-  if (isLoading)
-    return <div className="p-8 text-center">Loading road data...</div>;
+  if (isLoading) return <LoadingIcon />;
   if (error) return <div className="p-8 text-red-500">{error}</div>;
 
   return (

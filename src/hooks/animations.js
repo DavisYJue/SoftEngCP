@@ -1,27 +1,22 @@
-import { useEffect, useState } from "react";
-import { useAnimation } from "framer-motion";
+import { useState } from "react";
 
 export function usePageAnimation() {
-  const controls = useAnimation();
   const [isExiting, setIsExiting] = useState(false);
 
-  useEffect(() => {
-    // Play entrance animation on mount
-    controls.start({
-      y: 0,
-      opacity: 1,
-      transition: { duration: 0.8, ease: "easeOut" },
-    });
-  }, [controls]);
-
-  const startExitAnimation = async () => {
-    setIsExiting(true);
-    await controls.start({
-      y: -100,
-      opacity: 0,
-      transition: { duration: 0.6, ease: "easeInOut" },
-    });
+  const variants = {
+    initial: { y: -100, opacity: 0 },
+    animate: { y: 0, opacity: 1 },
+    exit: { y: -100, opacity: 0 },
   };
 
-  return { controls, isExiting, startExitAnimation };
+  const transition = { duration: 1, ease: "easeInOut" };
+
+  const startExit = () => setIsExiting(true);
+
+  return {
+    isExiting,
+    variants,
+    transition,
+    startExit,
+  };
 }

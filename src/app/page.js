@@ -9,7 +9,7 @@ import { useSelection } from "@/context/SelectionContext";
 
 export default function HomePage() {
   const router = useRouter();
-  const { controls, isExiting, startExitAnimation } = usePageAnimation();
+  const { isExiting, variants, transition, startExit } = usePageAnimation();
 
   const {
     resetSelection,
@@ -26,17 +26,25 @@ export default function HomePage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleExploreClick = async () => {
-    await startExitAnimation();
-    router.push("/RoadsData");
+  const handleExploreClick = () => {
+    startExit();
+  };
+
+  const onExitComplete = () => {
+    if (isExiting) {
+      router.push("/RoadsData");
+    }
   };
 
   return (
     <Template>
       <motion.div
-        initial={{ y: -100, opacity: 0 }}
-        animate={controls}
+        initial="initial"
+        animate={isExiting ? "exit" : "animate"}
+        variants={variants}
+        transition={transition}
         className="z-10 max-w-4xl text-center px-10 py-12 bg-white/90 backdrop-blur-md shadow-2xl rounded-3xl border border-white/50"
+        onAnimationComplete={onExitComplete}
       >
         <h2 className="text-3xl text-indigo-700 font-extrabold mb-3">
           Welcome!
@@ -55,7 +63,7 @@ export default function HomePage() {
         <button
           onClick={handleExploreClick}
           disabled={isExiting}
-          className="px-8 py-3 bg-indigo-400 hover:bg-indigo-500 text-black text-xl font-bold rounded-xl shadow-lg hover:shadow-violet-500/100 transition-transform duration-300"
+          className="px-8 py-3 bg-indigo-400 hover:bg-indigo-500 text-black text-xl font-bold rounded-xl shadow-lg hover:shadow-violet-500/100 transition-transform duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           Explore Data
         </button>

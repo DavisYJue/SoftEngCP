@@ -4,20 +4,42 @@ import dynamic from "next/dynamic";
 import { useSelection } from "@/context/SelectionContext";
 import { useMemo, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
 import Template from "@/components/Template";
 
-// Dynamic import with no SSR
+// Dynamic import with no SSR for Leaflet map
 const RoadsMapLeaflet = dynamic(() => import("@/components/RoadsMapLeaflet"), {
   ssr: false,
 });
 
 export default function RoadsMap() {
   const router = useRouter();
-  const { visibleSelectedItems, selectedItems } = useSelection();
+  const { visibleSelectedItems, selectedItems, setOriginalData } =
+    useSelection();
   const [districtsGeoJSON, setDistrictsGeoJSON] = useState(null);
 
-  // Load district GeoJSON on mount
+  // State to track if component is mounted on client
+  const [hasMounted, setHasMounted] = useState(false);
+
+  useEffect(() => {
+    setHasMounted(true);
+  }, []);
+
+  // Load original roads data once on mount
+  useEffect(() => {
+    fetch("/data/final_gz_roads_ID.geojson")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.features && Array.isArray(data.features)) {
+          setOriginalData(data.features); // <-- set array of features here
+        } else {
+          console.error("Invalid GeoJSON roads data:", data);
+          setOriginalData([]);
+        }
+      })
+      .catch((err) => console.error("Failed to load roads data:", err));
+  }, [setOriginalData]);
+
+  // Load districts GeoJSON on mount
   useEffect(() => {
     fetch("/data/final_gz_districts.geojson")
       .then((res) => res.json())
@@ -25,12 +47,13 @@ export default function RoadsMap() {
       .catch((err) => console.error("Failed to load district GeoJSON:", err));
   }, []);
 
+  // Data to show on map: visibleSelectedItems if any, otherwise all selectedItems
   const dataToShow =
     visibleSelectedItems?.length > 0
       ? visibleSelectedItems
       : selectedItems || [];
 
-  // Find major road (longest)
+  // Find the major road (longest) to center map
   const majorRoad = useMemo(() => {
     if (!dataToShow.length) return null;
     return dataToShow.reduce((max, curr) =>
@@ -69,11 +92,13 @@ export default function RoadsMap() {
 
         {/* Map container */}
         <div className="rounded-lg overflow-hidden flex-grow">
-          <RoadsMapLeaflet
-            dataToShow={dataToShow}
-            center={center}
-            districtsGeoJSON={districtsGeoJSON}
-          />
+          {hasMounted && (
+            <RoadsMapLeaflet
+              dataToShow={dataToShow}
+              center={center}
+              districtsGeoJSON={districtsGeoJSON}
+            />
+          )}
         </div>
       </div>
     </Template>

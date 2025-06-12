@@ -1,6 +1,12 @@
 "use client";
 
-import React, { createContext, useContext, useState, useMemo } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useMemo,
+  useEffect,
+} from "react";
 
 const SelectionContext = createContext();
 
@@ -10,6 +16,24 @@ export const SelectionProvider = ({ children }) => {
   const [selectedIds, setSelectedIds] = useState([]);
   const [originalData, setOriginalData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
+
+  // Load selectedIds from localStorage on mount
+  useEffect(() => {
+    const stored = localStorage.getItem("selectedIds");
+    if (stored) {
+      try {
+        const parsed = JSON.parse(stored);
+        if (Array.isArray(parsed)) setSelectedIds(parsed);
+      } catch (e) {
+        console.warn("Failed to parse selectedIds from localStorage", e);
+      }
+    }
+  }, []);
+
+  // Persist selectedIds to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem("selectedIds", JSON.stringify(selectedIds));
+  }, [selectedIds]);
 
   const selectedItems = useMemo(() => {
     return originalData.filter((item) => selectedIds.includes(item.id));

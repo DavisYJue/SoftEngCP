@@ -11,23 +11,21 @@ import {
 import { useEffect } from "react";
 import "leaflet/dist/leaflet.css";
 
-// 12 distinct, vibrant colors for districts
 const colorMap = {
-  荔湾区: "#4c0519", // deep red
-  越秀区: "#22c55e", // spring green
-  海珠区: "#fcd34d", // yellow
-  天河区: "#1d4ed8", // blue
-  白云区: "#f97316", // orange
-  黄埔区: "#911eb4", // purple
-  番禺区: "#008080", // cyan
-  花都区: "#f032e6", // magenta
-  南沙区: "#e6194b", // pink/red
-  从化区: "#006400", // dark green
-  增城区: "#06b6d4", // sky blue
-  博罗县: "#ff4500", // orange-red
+  荔湾区: "#4c0519",
+  越秀区: "#22c55e",
+  海珠区: "#fcd34d",
+  天河区: "#1d4ed8",
+  白云区: "#f97316",
+  黄埔区: "#911eb4",
+  番禺区: "#008080",
+  花都区: "#f032e6",
+  南沙区: "#e6194b",
+  从化区: "#006400",
+  增城区: "#06b6d4",
+  博罗县: "#ff4500",
 };
 
-// Helper component to fit map bounds to districts GeoJSON
 function FitBoundsToDistricts({ districtsGeoJSON }) {
   const map = useMap();
 
@@ -79,7 +77,6 @@ export default function RoadsMapLeaflet({
           url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
         />
 
-        {/* Districts */}
         {districtsGeoJSON && (
           <>
             <GeoJSON
@@ -90,12 +87,10 @@ export default function RoadsMapLeaflet({
                 layer.bindPopup(`<strong>${name}</strong>`);
               }}
             />
-            {/* Fit bounds to show all districts */}
             <FitBoundsToDistricts districtsGeoJSON={districtsGeoJSON} />
           </>
         )}
 
-        {/* Roads */}
         {dataToShow.map((feature) => {
           if (!feature.geometry || feature.geometry.type !== "LineString")
             return null;
@@ -170,7 +165,6 @@ export default function RoadsMapLeaflet({
           ))}
         </div>
 
-        {/* Road Legend */}
         <div
           style={{
             display: "flex",

@@ -1,63 +1,81 @@
 "use client";
 
-import { useEffect } from "react";
+import dynamic from "next/dynamic";
 import { useSelection } from "@/context/SelectionContext";
-import { MapContainer, TileLayer, Polyline, Popup } from "react-leaflet";
-import "leaflet/dist/leaflet.css";
+import { useMemo, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { ArrowLeft } from "lucide-react";
+import Template from "@/components/Template";
+
+// Dynamic import with no SSR
+const RoadsMapLeaflet = dynamic(() => import("@/components/RoadsMapLeaflet"), {
+  ssr: false,
+});
 
 export default function RoadsMap() {
+  const router = useRouter();
   const { visibleSelectedItems, selectedItems } = useSelection();
+  const [districtsGeoJSON, setDistrictsGeoJSON] = useState(null);
 
-  // If filtered, use visibleSelectedItems, else selectedItems
-  const dataToShow = visibleSelectedItems.length
-    ? visibleSelectedItems
-    : selectedItems;
+  // Load district GeoJSON on mount
+  useEffect(() => {
+    fetch("/data/final_gz_districts.geojson")
+      .then((res) => res.json())
+      .then((data) => setDistrictsGeoJSON(data))
+      .catch((err) => console.error("Failed to load district GeoJSON:", err));
+  }, []);
 
-  // Calculate map center from data or default
-  const center = dataToShow.length
-    ? [
-        dataToShow[0].geometry.coordinates[0][1],
-        dataToShow[0].geometry.coordinates[0][0],
-      ]
-    : [23.1291, 113.2644]; // Default center: Guangzhou city coords
+  const dataToShow =
+    visibleSelectedItems?.length > 0
+      ? visibleSelectedItems
+      : selectedItems || [];
+
+  // Find major road (longest)
+  const majorRoad = useMemo(() => {
+    if (!dataToShow.length) return null;
+    return dataToShow.reduce((max, curr) =>
+      curr.properties.geometry_length > max.properties.geometry_length
+        ? curr
+        : max
+    );
+  }, [dataToShow]);
+
+  const center = useMemo(() => {
+    if (
+      majorRoad?.geometry?.coordinates?.[0]?.[1] &&
+      majorRoad?.geometry?.coordinates?.[0]?.[0]
+    ) {
+      return [
+        majorRoad.geometry.coordinates[0][1],
+        majorRoad.geometry.coordinates[0][0],
+      ];
+    }
+    return [23.1291, 113.2644]; // Guangzhou default
+  }, [majorRoad]);
 
   return (
-    <div className="h-screen w-full">
-      <MapContainer
-        center={center}
-        zoom={12}
-        style={{ height: "100%", width: "100%" }}
+    <Template>
+      <div
+        className="w-full m-5 bg-white rounded-lg shadow p-6 flex flex-col space-y-4"
+        style={{ height: "calc(100vh - 80px)" }}
       >
-        <TileLayer
-          attribution='&copy; <a href="https://osm.org/copyright">OpenStreetMap</a>'
-          url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
-        />
+        {/* Back button */}
+        <button
+          onClick={() => router.back()}
+          className="flex w-1/20 text-center items-center space-x-2 px-4 py-2 bg-indigo-400 hover:bg-indigo-500 text-black text-xl font-bold rounded-xl shadow-lg hover:shadow-violet-500/100 transition-transform duration-300"
+        >
+          <span>Back</span>
+        </button>
 
-        {dataToShow.map((feature) => {
-          if (!feature.geometry || feature.geometry.type !== "LineString")
-            return null;
-
-          // Extract latlngs for Polyline
-          const latlngs = feature.geometry.coordinates.map(([lng, lat]) => [
-            lat,
-            lng,
-          ]);
-
-          return (
-            <Polyline key={feature.id} positions={latlngs} color="blue">
-              <Popup>
-                <div>
-                  <strong>{feature.properties.name}</strong>
-                  <br />
-                  Length: {feature.properties.geometry_length} units
-                  <br />
-                  District: {feature.properties.district_name}
-                </div>
-              </Popup>
-            </Polyline>
-          );
-        })}
-      </MapContainer>
-    </div>
+        {/* Map container */}
+        <div className="rounded-lg overflow-hidden flex-grow">
+          <RoadsMapLeaflet
+            dataToShow={dataToShow}
+            center={center}
+            districtsGeoJSON={districtsGeoJSON}
+          />
+        </div>
+      </div>
+    </Template>
   );
 }

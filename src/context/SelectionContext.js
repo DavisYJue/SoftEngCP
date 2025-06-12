@@ -17,6 +17,11 @@ export const SelectionProvider = ({ children }) => {
   const [originalData, setOriginalData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
 
+  const resetSelection = () => {
+    setSelectedIds([]);
+    localStorage.removeItem("selectedIds");
+  };
+
   // Load selectedIds from localStorage on mount
   useEffect(() => {
     const stored = localStorage.getItem("selectedIds");
@@ -66,6 +71,7 @@ export const SelectionProvider = ({ children }) => {
         selectedItems,
         visibleSelectedItems,
         filteredSelections,
+        resetSelection,
       }}
     >
       {children}

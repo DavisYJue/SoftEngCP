@@ -4,10 +4,18 @@ import { useRouter } from "next/navigation";
 import { usePageAnimation } from "@/hooks/animations";
 import Template from "@/components/Template";
 import { motion } from "framer-motion";
+import { useEffect } from "react";
+import { useSelection } from "@/context/SelectionContext";
 
 export default function HomePage() {
   const router = useRouter();
   const { controls, isExiting, startExitAnimation } = usePageAnimation();
+
+  const { resetSelection } = useSelection();
+
+  useEffect(() => {
+    resetSelection();
+  }, []);
 
   const handleExploreClick = async () => {
     await startExitAnimation();

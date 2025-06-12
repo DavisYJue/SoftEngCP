@@ -80,9 +80,9 @@ const RoadsDataPage = () => {
         {/* Back button below table */}
         <button
           onClick={() => router.push("/")}
-          className="flex w-24 justify-center items-center space-x-2 px-4 py-2 bg-indigo-400 hover:bg-indigo-500 text-black text-lg font-bold rounded-xl shadow-lg hover:shadow-violet-500/100 transition-transform duration-300 mt-6 mx-auto"
+          className="flex w-50 justify-center items-center space-x-2 px-4 py-2 bg-indigo-400 hover:bg-indigo-500 text-black text-lg font-bold rounded-xl shadow-lg hover:shadow-violet-500/100 transition-transform duration-300 mt-6 mx-auto"
         >
-          <span>Back</span>
+          <span>Back to Main Page</span>
         </button>
       </div>
     </Template>

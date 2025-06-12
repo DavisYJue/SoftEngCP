@@ -11,10 +11,19 @@ export default function HomePage() {
   const router = useRouter();
   const { controls, isExiting, startExitAnimation } = usePageAnimation();
 
-  const { resetSelection } = useSelection();
+  const {
+    resetSelection,
+    setDistrictFilter,
+    setSuffixFilter,
+    setFilterText, // also reset main text filter if you want
+  } = useSelection();
 
   useEffect(() => {
     resetSelection();
+    setDistrictFilter("");
+    setSuffixFilter("");
+    setFilterText("");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleExploreClick = async () => {

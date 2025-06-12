@@ -21,18 +21,20 @@ const computeGeometryLength = (geometry) => {
 export function useRoadsData() {
   const {
     originalData,
-    setOriginalData,
     filteredData,
-    setFilteredData,
+    setOriginalData,
+    filterText,
+    districtFilter,
+    suffixFilter,
+    setFilterText,
+    setDistrictFilter,
+    setSuffixFilter,
     selectedIds,
     setSelectedIds,
     selectedItems,
     visibleSelectedItems,
   } = useSelection();
 
-  const [filterText, setFilterText] = useState("");
-  const [districtFilter, setDistrictFilter] = useState("");
-  const [suffixFilter, setSuffixFilter] = useState("");
   const [districts, setDistricts] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
@@ -56,7 +58,6 @@ export function useRoadsData() {
         });
 
         setOriginalData(processedFeatures);
-        setFilteredData(processedFeatures);
 
         const districtsResponse = await fetch(
           "/data/final_gz_districts.geojson"
@@ -77,39 +78,7 @@ export function useRoadsData() {
     };
 
     fetchData();
-  }, []);
-
-  useEffect(() => {
-    if (!originalData?.length) return;
-
-    let result = [...originalData];
-
-    if (filterText.trim()) {
-      const searchTerm = filterText.toLowerCase();
-      result = result.filter((feature) => {
-        const props = feature.properties;
-        return (
-          feature.id?.toString().includes(searchTerm) ||
-          props.name?.toLowerCase().includes(searchTerm)
-        );
-      });
-    }
-
-    if (districtFilter) {
-      result = result.filter(
-        (feature) => feature.properties.district_name === districtFilter
-      );
-    }
-
-    if (suffixFilter) {
-      result = result.filter(
-        (feature) => feature.properties.suffix === suffixFilter
-      );
-    }
-
-    setFilteredData(result);
-    setCurrentPage(1);
-  }, [filterText, districtFilter, suffixFilter, originalData]);
+  }, [setOriginalData]);
 
   return {
     originalData,

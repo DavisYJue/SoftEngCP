@@ -1,5 +1,7 @@
-// src/hooks/useRoadsData.js
+"use client";
+
 import { useState, useEffect } from "react";
+import { useSelection } from "@/context/SelectionContext";
 
 const ITEMS_PER_PAGE = 20;
 
@@ -17,11 +19,20 @@ const computeGeometryLength = (geometry) => {
 };
 
 export function useRoadsData() {
-  const [originalData, setOriginalData] = useState([]);
-  const [filteredData, setFilteredData] = useState([]);
+  const {
+    originalData,
+    setOriginalData,
+    filteredData,
+    setFilteredData,
+    selectedIds,
+    setSelectedIds,
+    selectedItems,
+    visibleSelectedItems,
+  } = useSelection();
+
   const [filterText, setFilterText] = useState("");
   const [districtFilter, setDistrictFilter] = useState("");
-  const [suffixFilter, setSuffixFilter] = useState(""); // new suffix filter state
+  const [suffixFilter, setSuffixFilter] = useState("");
   const [districts, setDistricts] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
@@ -69,7 +80,7 @@ export function useRoadsData() {
   }, []);
 
   useEffect(() => {
-    if (!originalData.length) return;
+    if (!originalData?.length) return;
 
     let result = [...originalData];
 
@@ -107,13 +118,17 @@ export function useRoadsData() {
     setFilterText,
     districtFilter,
     setDistrictFilter,
-    suffixFilter, // expose suffix filter state
-    setSuffixFilter, // expose suffix filter setter
+    suffixFilter,
+    setSuffixFilter,
     districts,
     currentPage,
     setCurrentPage,
     isLoading,
     error,
     ITEMS_PER_PAGE,
+    selectedIds,
+    setSelectedIds,
+    selectedItems,
+    visibleSelectedItems,
   };
 }

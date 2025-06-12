@@ -1,8 +1,8 @@
 "use client";
 
 import Template from "@/components/Template";
-import FilterSection from "../../components/FilterSection";
-import RoadsTable from "../../components/RoadsTable";
+import FilterSection from "@/components/FilterSection";
+import RoadsTable from "@/components/RoadsTable";
 import { useRoadsData } from "@/hooks/useRoadsData";
 
 const RoadsDataPage = () => {
@@ -13,20 +13,24 @@ const RoadsDataPage = () => {
     setFilterText,
     districtFilter,
     setDistrictFilter,
-    suffixFilter, // added suffixFilter
-    setSuffixFilter, // added setter
+    suffixFilter,
+    setSuffixFilter,
     districts,
     currentPage,
     setCurrentPage,
     isLoading,
     error,
     ITEMS_PER_PAGE,
+    selectedIds,
+    setSelectedIds,
+    selectedItems,
+    visibleSelectedItems,
   } = useRoadsData();
 
   const clearFilters = () => {
     setFilterText("");
     setDistrictFilter("");
-    setSuffixFilter(""); // clear suffix filter as well
+    setSuffixFilter("");
   };
 
   if (isLoading)
@@ -43,20 +47,19 @@ const RoadsDataPage = () => {
         <FilterSection
           filterText={filterText}
           districtFilter={districtFilter}
-          suffixFilter={suffixFilter} // pass suffixFilter
+          suffixFilter={suffixFilter}
           districts={districts}
           onFilterChange={(e) => setFilterText(e.target.value)}
           onDistrictChange={(e) => setDistrictFilter(e.target.value)}
-          onSuffixChange={(e) => setSuffixFilter(e.target.value)} // pass suffix change handler
+          onSuffixChange={(e) => setSuffixFilter(e.target.value)}
           onClearFilters={clearFilters}
           filteredCount={filteredData.length}
-          totalCount={filteredData.length} // or originalData.length if needed
+          totalCount={originalData.length}
         />
 
         <RoadsTable
           data={filteredData}
-          originalData={originalData} // pass full unfiltered dataset here
-          filteredData={filteredData}
+          originalData={originalData}
           columns={[
             { id: "name", label: "Road Name" },
             { id: "name_no_suffix", label: "Name Without Suffix" },

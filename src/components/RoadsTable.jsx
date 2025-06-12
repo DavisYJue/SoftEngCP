@@ -1,29 +1,28 @@
-import React, { useState } from "react";
+import React from "react";
 import Pagination from "./Pagination";
 import SelectedRoadsTable from "./SelectedRoadsTable";
 import SelectableTable from "./SelectableTable";
 import NoDataMessage from "./NoDataMessage";
+import { useSelection } from "@/context/SelectionContext";
 
 const RoadsTable = ({
   data,
+  originalData,
   columns,
   currentPage,
   itemsPerPage,
   totalItems,
   onPageChange,
-  originalData,
 }) => {
-  const [selectedIds, setSelectedIds] = useState([]);
-
   const isFiltered = data.length !== originalData.length;
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = Math.min(startIndex + itemsPerPage, totalItems);
   const currentItems = data.slice(startIndex, endIndex);
 
+  const { selectedIds, setSelectedIds, selectedItems, visibleSelectedItems } =
+    useSelection();
+
   const isSelected = (featureId) => selectedIds.includes(featureId);
-  const selectedItems = data.filter((feature) =>
-    selectedIds.includes(feature.id)
-  );
 
   const handleRowClick = (featureId) => {
     setSelectedIds((prev) =>
@@ -65,6 +64,7 @@ const RoadsTable = ({
         isSelected={isSelected}
         onRowClick={handleRowClick}
       />
+
       <Pagination
         currentPage={currentPage}
         itemsPerPage={itemsPerPage}
@@ -75,10 +75,11 @@ const RoadsTable = ({
         isIndeterminate={isIndeterminate}
         isFiltered={isFiltered}
       />
-      {selectedItems.length > 0 && (
+
+      {visibleSelectedItems.length > 0 && (
         <div className="overflow-x-auto rounded-lg text-black mb-6">
           <SelectedRoadsTable
-            selectedItems={selectedItems}
+            selectedItems={visibleSelectedItems}
             columns={columns}
             onRemove={handleRemoveSelected}
             onDeselectFiltered={() =>
@@ -88,6 +89,7 @@ const RoadsTable = ({
             }
             onDeselectAll={() => setSelectedIds([])}
             isFiltered={isFiltered}
+            totalSelected={selectedItems.length}
           />
         </div>
       )}

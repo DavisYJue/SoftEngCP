@@ -14,20 +14,18 @@ const SelectedRoadsTable = ({
   isFiltered,
   onDeselectFiltered,
   onDeselectAll,
+  totalSelected,
 }) => {
   const [currentPage, setCurrentPage] = useState(1);
 
   const totalItems = selectedItems.length;
   const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
-
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
   const endIndex = Math.min(startIndex + ITEMS_PER_PAGE, totalItems);
   const currentItems = selectedItems.slice(startIndex, endIndex);
 
   const onPageChange = (page) => {
-    if (page >= 1 && page <= totalPages) {
-      setCurrentPage(page);
-    }
+    if (page >= 1 && page <= totalPages) setCurrentPage(page);
   };
 
   if (totalItems === 0) return null;
@@ -35,7 +33,8 @@ const SelectedRoadsTable = ({
   return (
     <div className="mt-8 text-black">
       <h2 className="text-xl font-semibold mb-2 px-1">
-        Selected Road Segments ({totalItems})
+        Selected Road Segments ({totalItems}
+        {typeof totalSelected === "number" ? ` of ${totalSelected}` : ""})
       </h2>
 
       <div className="overflow-x-auto rounded-lg shadow border border-gray-200">
@@ -78,23 +77,17 @@ const SelectedRoadsTable = ({
           </tbody>
         </table>
 
-        {/* Footer */}
         <div className="flex flex-col md:flex-row justify-between items-center p-4 bg-gray-50 border-t text-md text-gray-600 space-y-3 md:space-y-0">
-          {/* Left actions */}
           <SelectedRoadsActions
             isFiltered={isFiltered}
             onDeselectFiltered={onDeselectFiltered}
             onDeselectAll={onDeselectAll}
           />
-
-          {/* Center pagination info */}
           <PaginationInfo
             currentPage={currentPage}
             itemsPerPage={ITEMS_PER_PAGE}
             totalItems={totalItems}
           />
-
-          {/* Right pagination controls */}
           <PaginationControls
             currentPage={currentPage}
             totalPages={totalPages}

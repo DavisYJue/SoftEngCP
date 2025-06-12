@@ -2,6 +2,7 @@ import { useState } from "react";
 
 export function usePageAnimation() {
   const [isExiting, setIsExiting] = useState(false);
+  const [exitTarget, setExitTarget] = useState(null);
 
   const variants = {
     initial: { y: -100, opacity: 0 },
@@ -9,12 +10,16 @@ export function usePageAnimation() {
     exit: { y: -100, opacity: 0 },
   };
 
-  const transition = { duration: 1, ease: "easeInOut" };
+  const transition = { duration: 0.6, ease: "easeInOut" };
 
-  const startExit = () => setIsExiting(true);
+  const startExit = (target) => {
+    setExitTarget(target);
+    setIsExiting(true);
+  };
 
   return {
     isExiting,
+    exitTarget,
     variants,
     transition,
     startExit,

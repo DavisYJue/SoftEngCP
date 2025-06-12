@@ -13,6 +13,7 @@ const RoadsTable = ({
   itemsPerPage,
   totalItems,
   onPageChange,
+  onShowMap,
 }) => {
   const isFiltered = data.length !== originalData.length;
   const startIndex = (currentPage - 1) * itemsPerPage;
@@ -90,6 +91,7 @@ const RoadsTable = ({
             onDeselectAll={() => setSelectedIds([])}
             isFiltered={isFiltered}
             totalSelected={selectedItems.length}
+            onShowMap={onShowMap}
           />
         </div>
       )}

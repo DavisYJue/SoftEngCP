@@ -22,9 +22,10 @@ const SelectedRoadsTable = ({
 }) => {
   const [currentPage, setCurrentPage] = useState(1);
 
-  // NEW: local state for fade-out when deselecting
+  // Local state for fade-out animation
   const [isDeselecting, setIsDeselecting] = useState(false);
-  const [deselectAction, setDeselectAction] = useState(null); // will hold function to call after animation
+  const [deselectAction, setDeselectAction] = useState(null); // callback to call after animation
+  const [pendingRemoveId, setPendingRemoveId] = useState(null); // id to remove after fade
 
   const totalItems = selectedItems.length;
   const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
@@ -33,8 +34,7 @@ const SelectedRoadsTable = ({
   const currentItems = selectedItems.slice(startIndex, endIndex);
 
   const router = useRouter();
-  const { isExiting, exitTarget, startExit, variants, transition } =
-    usePageAnimation();
+  const { isExiting, exitTarget, startExit } = usePageAnimation();
 
   const handleShowMapClick = () => {
     startExit("/RoadsMap");
@@ -44,26 +44,35 @@ const SelectedRoadsTable = ({
     if (page >= 1 && page <= totalPages) setCurrentPage(page);
   };
 
-  // NEW handler when deselect button clicked
+  // Bulk deselect handler with fade-out
   const handleDeselectClick = () => {
-    // Start fade-out animation
     setIsDeselecting(true);
-
-    // Remember which callback to call after animation
     setDeselectAction(() => (isFiltered ? onDeselectFiltered : onDeselectAll));
+  };
+
+  // Individual remove handler with fade-out on last item
+  const handleRemoveClick = (id) => {
+    if (totalItems === 1) {
+      // Last item — fade out before removing
+      setIsDeselecting(true);
+      setPendingRemoveId(id);
+      setDeselectAction(() => () => onRemove(id));
+    } else {
+      // More than 1 item — remove immediately
+      onRemove(id);
+    }
   };
 
   // Called after fade-out animation completes
   const onAnimationComplete = () => {
     if (isDeselecting) {
-      // Call the actual deselect callback
       if (deselectAction) deselectAction();
 
-      // Reset deselect state so fade-in can happen if needed
+      // Reset fade-out states
       setIsDeselecting(false);
       setDeselectAction(null);
+      setPendingRemoveId(null);
 
-      // Optionally reset page to 1 after deselect
       setCurrentPage(1);
     }
 
@@ -78,7 +87,6 @@ const SelectedRoadsTable = ({
     <AnimatePresence mode="wait">
       <motion.div
         key="selected-roads"
-        // Animate fade-out on deselect and page exit, otherwise fade-in
         initial={{ opacity: 0, y: 20 }}
         animate={{
           opacity: isDeselecting || isExiting ? 0 : 1,
@@ -124,7 +132,7 @@ const SelectedRoadsTable = ({
                   <td className="py-3 px-4 border-b">
                     <button
                       className="px-3 py-1 mb-0.5 bg-rose-400 hover:bg-rose-700 text-lg font-bold rounded-xl shadow-lg hover:shadow-rose-500/100 transition duration-150"
-                      onClick={() => onRemove(feature.id)}
+                      onClick={() => handleRemoveClick(feature.id)}
                     >
                       Remove
                     </button>
@@ -137,7 +145,6 @@ const SelectedRoadsTable = ({
           <div className="flex flex-col md:flex-row justify-between items-center p-4 bg-gray-50 border-t text-md text-gray-600 space-y-3 md:space-y-0">
             <SelectedRoadsActions
               isFiltered={isFiltered}
-              // Instead of calling deselect directly, call our fade-out handler
               onDeselectFiltered={handleDeselectClick}
               onDeselectAll={handleDeselectClick}
               onShowMap={onShowMap}

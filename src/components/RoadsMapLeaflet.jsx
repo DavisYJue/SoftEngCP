@@ -32,7 +32,13 @@ function FitBoundsToDistricts({ districtsGeoJSON }) {
   useEffect(() => {
     if (districtsGeoJSON) {
       const geojsonLayer = L.geoJSON(districtsGeoJSON);
-      map.fitBounds(geojsonLayer.getBounds(), { padding: [50, 50] });
+      const bounds = geojsonLayer.getBounds();
+      map.fitBounds(bounds, { padding: [50, 50] });
+
+      // Zoom in one level after fitting bounds
+      setTimeout(() => {
+        map.setZoom(map.getZoom() + 1);
+      }, 500);
     }
   }, [districtsGeoJSON, map]);
 

@@ -10,7 +10,7 @@ export function usePageAnimation() {
     exit: { y: -100, opacity: 0 },
   };
 
-  const transition = { duration: 0.6, ease: "easeInOut" };
+  const transition = { duration: 0.8, ease: "easeInOut" };
 
   const startExit = (target) => {
     setExitTarget(target);

@@ -69,12 +69,12 @@ export default function RoadsMap() {
         majorRoad.geometry.coordinates[0][0],
       ];
     }
-    return [23.1291, 113.2644]; // Default to Guangzhou
+    return [23.1291, 113.2644];
   }, [majorRoad]);
 
   const handleBack = () => {
     startExit();
-    setTimeout(() => router.push("/roadsdata"), 500); // match transition.duration
+    setTimeout(() => router.push("/roadsdata"), 500);
   };
 
   return (

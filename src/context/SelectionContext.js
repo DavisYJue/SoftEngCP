@@ -18,12 +18,10 @@ export const SelectionProvider = ({ children }) => {
   const [selectedIds, setSelectedIds] = useState([]);
   const [originalData, setOriginalData] = useState([]);
 
-  // Filters moved here and persisted
   const [filterText, setFilterText] = useState("");
   const [districtFilter, setDistrictFilter] = useState("");
   const [suffixFilter, setSuffixFilter] = useState("");
 
-  // Load filters from localStorage on mount
   useEffect(() => {
     try {
       const storedFilters = localStorage.getItem(FILTERS_STORAGE_KEY);
@@ -39,13 +37,11 @@ export const SelectionProvider = ({ children }) => {
     }
   }, []);
 
-  // Persist filters to localStorage when changed
   useEffect(() => {
     const filters = { filterText, districtFilter, suffixFilter };
     localStorage.setItem(FILTERS_STORAGE_KEY, JSON.stringify(filters));
   }, [filterText, districtFilter, suffixFilter]);
 
-  // Load selectedIds from localStorage on mount
   useEffect(() => {
     const stored = localStorage.getItem("selectedIds");
     if (stored) {
@@ -58,12 +54,10 @@ export const SelectionProvider = ({ children }) => {
     }
   }, []);
 
-  // Persist selectedIds to localStorage when changed
   useEffect(() => {
     localStorage.setItem("selectedIds", JSON.stringify(selectedIds));
   }, [selectedIds]);
 
-  // Compute filteredData based on originalData + filters
   const filteredData = useMemo(() => {
     if (!originalData.length) return [];
 
@@ -95,12 +89,10 @@ export const SelectionProvider = ({ children }) => {
     return filtered;
   }, [originalData, filterText, districtFilter, suffixFilter]);
 
-  // All selected items
   const selectedItems = useMemo(() => {
     return originalData.filter((item) => selectedIds.includes(item.id));
   }, [originalData, selectedIds]);
 
-  // Selected items visible under current filter
   const visibleSelectedItems = useMemo(() => {
     return filteredData.filter((item) => selectedIds.includes(item.id));
   }, [filteredData, selectedIds]);

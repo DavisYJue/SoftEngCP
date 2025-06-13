@@ -6,7 +6,7 @@ const SelectedRoadsActions = ({
   isFiltered,
   onDeselectFiltered,
   onDeselectAll,
-  onShowMap, // <-- New prop
+  onShowMap,
 }) => {
   return (
     <div className="flex space-x-2">
@@ -17,7 +17,7 @@ const SelectedRoadsActions = ({
         {isFiltered ? "Deselect Filtered" : "Deselect All"}
       </button>
       <button
-        onClick={onShowMap} // use the new handler
+        onClick={onShowMap}
         className="px-4 py-1 bg-emerald-400 hover:bg-emerald-600 text-black text-lg font-bold rounded-xl shadow-lg hover:shadow-green-600/100 transition-transform duration-300"
       >
         Show Roads Mapping

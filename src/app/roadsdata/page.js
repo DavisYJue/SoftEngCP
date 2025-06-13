@@ -8,7 +8,6 @@ import { useRoadsData } from "@/hooks/useRoadsData";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { usePageAnimation } from "@/hooks/animations";
-import SelectedRoadsActions from "@/components/SelectedRoadsActions";
 
 const RoadsDataPage = () => {
   const router = useRouter();

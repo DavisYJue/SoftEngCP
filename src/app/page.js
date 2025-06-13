@@ -19,7 +19,6 @@ export default function HomePage() {
     setDistrictFilter("");
     setSuffixFilter("");
     setFilterText("");
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleExploreClick = () => {

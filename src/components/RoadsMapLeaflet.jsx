@@ -1,15 +1,11 @@
 "use client";
 
-import {
-  MapContainer,
-  TileLayer,
-  Polyline,
-  Popup,
-  GeoJSON,
-  useMap,
-} from "react-leaflet";
+import { MapContainer, TileLayer, GeoJSON, useMap } from "react-leaflet";
 import { useEffect } from "react";
 import "leaflet/dist/leaflet.css";
+
+import RoadPolyline from "@/components/RoadPolyline";
+import DistrictLegend from "@/components/DistrictLegend";
 
 const colorMap = {
   荔湾区: "#4c0519",
@@ -35,7 +31,6 @@ function FitBoundsToDistricts({ districtsGeoJSON }) {
       const bounds = geojsonLayer.getBounds();
       map.fitBounds(bounds, { padding: [50, 50] });
 
-      // Zoom in one level after fitting bounds
       setTimeout(() => {
         map.setZoom(map.getZoom() + 1);
       }, 500);
@@ -97,101 +92,12 @@ export default function RoadsMapLeaflet({
           </>
         )}
 
-        {dataToShow.map((feature) => {
-          if (!feature.geometry || feature.geometry.type !== "LineString")
-            return null;
-
-          const latlngs = feature.geometry.coordinates.map(([lng, lat]) => [
-            lat,
-            lng,
-          ]);
-
-          return (
-            <Polyline
-              key={feature.id}
-              positions={latlngs}
-              color="black"
-              weight={5}
-            >
-              <Popup>
-                <div>
-                  <strong>{feature.properties.name}</strong>
-                  <br />
-                  Length: {feature.properties.geometry_length} units
-                  <br />
-                  District: {feature.properties.district_name}
-                </div>
-              </Popup>
-            </Polyline>
-          );
-        })}
+        {dataToShow.map((feature) => (
+          <RoadPolyline key={feature.id} feature={feature} />
+        ))}
       </MapContainer>
 
-      {/* Floating Legend */}
-      <div
-        style={{
-          position: "absolute",
-          bottom: "20px",
-          left: "20px",
-          background: "white",
-          padding: "12px",
-          borderRadius: "8px",
-          boxShadow: "0 0 8px rgba(0,0,0,0.2)",
-          color: "black",
-          fontSize: "16px",
-          zIndex: 1000,
-        }}
-      >
-        <strong style={{ fontSize: "20px" }}>Districts</strong>
-        <div style={{ marginTop: "10px" }}>
-          {Object.entries(colorMap).map(([district, color]) => (
-            <div
-              key={district}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                marginBottom: "6px",
-              }}
-            >
-              <span
-                style={{
-                  width: "25px",
-                  height: "25px",
-                  background: color,
-                  opacity: 0.5,
-                  display: "inline-block",
-                  marginRight: "10px",
-                  border: "1px solid #999",
-                }}
-              />
-              <span style={{ fontSize: "15px", color: "black" }}>
-                {district}
-              </span>
-            </div>
-          ))}
-        </div>
-
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "10px",
-            userSelect: "none",
-          }}
-        >
-          <div
-            style={{
-              flexShrink: 0,
-              width: "25px",
-              height: "3px",
-              backgroundColor: "black",
-              borderRadius: "2px",
-              boxShadow: "0 0 4px rgba(0, 0, 0, 0.3)",
-            }}
-          />
-          <span style={{ fontSize: "15px", color: "black" }}>Roads</span>
-        </div>
-      </div>
+      <DistrictLegend colorMap={colorMap} />
     </div>
   );
 }

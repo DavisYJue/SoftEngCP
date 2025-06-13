@@ -1,7 +1,7 @@
 import React from "react";
 import LabeledInput from "./LabeledInput";
 import LabeledSelect from "./LabeledSelect";
-import FilterStatus from "./FilterStatus"; // ✅ New import
+import FilterStatus from "./FilterStatus";
 
 const FilterSection = ({
   filterText,

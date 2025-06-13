@@ -43,7 +43,7 @@ const RoadsDataPage = () => {
   };
 
   const handleShowMapClick = () => {
-    startExit("/RoadsMap");
+    startExit("/roadsmap");
   };
 
   const onExitComplete = () => {

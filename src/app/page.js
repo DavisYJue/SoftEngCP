@@ -28,7 +28,7 @@ export default function HomePage() {
 
   const onExitComplete = () => {
     if (isExiting) {
-      router.push("/RoadsData");
+      router.push("/roadsdata");
     }
   };
 

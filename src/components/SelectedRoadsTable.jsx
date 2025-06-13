@@ -37,7 +37,7 @@ const SelectedRoadsTable = ({
   const { isExiting, exitTarget, startExit } = usePageAnimation();
 
   const handleShowMapClick = () => {
-    startExit("/RoadsMap");
+    startExit("/roadsmap");
   };
 
   const onPageChange = (page) => {
